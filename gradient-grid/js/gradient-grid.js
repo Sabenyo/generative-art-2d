@@ -6,25 +6,72 @@ window.onload = function() {
 
   paper.setup(canvas);
 
-  // Values for polygon side # and radius
-  let radius = 200;
-  let startSides = 3;
-  let endSides = 10;
-  let polygons = [];
-  // Control values
-  let rotStep = 2;
-  let currRot = 0;
-  let startRot = 0;
-  let stopRot = 720;
-  let currPoly = startSides;
+  // Background
+  let background = new Path.Rectangle([0,0], view.size);
+  background.fillColor = 'black';
 
-  // Generate polygons
-  for(let sides = startSides; sides <= endSides; sides++){
-    polyPath = new Path.RegularPolygon(view.center, sides, radius);
-    polyPath.strokeColor = new Color({hue: sides, saturation: 1, brightness: 0});
-    polyPath.strokeWidth = 1;
-    polyPath.visible = true;
-    polygons[sides] = polyPath;
+  // Determine radius/diameter based on horizontal number of circles
+  let nWide = 15;
+  let diameter = view.size.width / nWide;
+  let radius = diameter / 2;
+  let nHigh = view.size.height / diameter;
+  let start = new Point(radius, radius);
+
+  let toggle = 0;
+  let outline = 0;
+
+  // Generate grid of circles
+  function generateGrid(base) {
+    for(let i = 0; i < nWide; i++) {
+      for (let j = 0; j < nHigh; j++) {
+
+        // Determine center
+        let center = [start.x + diameter * i, start.y + diameter * j]
+        let circle = new Path.Circle(center, radius);
+
+        // Add gradient, modulate color based on location
+        circle.fillColor = {
+          gradient: {
+            stops: [[{hue: base + 10 * i + 20 * j, saturation: 1, brightness: 1}, 0.1],
+                    [{hue: base + 90 + 10 * i + 20 * j, saturation: 1, brightness: 1}, 0.4],
+                    [{hue: base + 180 + 10 * i + 20 * j, saturation: 1, brightness: 1}, 1]],
+            radial: true
+          },
+          origin: circle.position,
+          destination: circle.bounds.rightCenter
+        }
+
+        // Outline circle on mouse hover
+        circle.onMouseEnter = function(event) {
+          this.strokeColor = 'white'
+          this.strokeWidth = 10;
+        }
+
+        circle.onMouseLeave = function(event) {
+          this.strokeWidth = 0;
+        }
+
+        // Change color of grid on mouse click
+        circle.onClick = function(event) {
+          //toggle = this.fillColor.hue;
+          console.log(this.fillColor.gradient.stops[0].color.components[0]);
+          toggle = this.fillColor.gradient.stops[0].color.components[0];
+          generateGrid(toggle);
+        }
+      }
+    }
   }
+
+  generateGrid(toggle);
+
+
+
+
+
+
+
+
+
+
 
 }
