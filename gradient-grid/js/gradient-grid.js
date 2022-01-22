@@ -17,7 +17,7 @@ window.onload = function() {
   let nHigh = view.size.height / diameter;
   let start = new Point(radius, radius);
 
-  let toggle = 0;
+  let seed = 0;
   let outline = 0;
 
   // Generate grid of circles
@@ -53,16 +53,16 @@ window.onload = function() {
 
         // Change color of grid on mouse click
         circle.onClick = function(event) {
-          //toggle = this.fillColor.hue;
+          //seed = this.fillColor.hue;
           console.log(this.fillColor.gradient.stops[0].color.components[0]);
-          toggle = this.fillColor.gradient.stops[0].color.components[0];
-          generateGrid(toggle);
+          seed = this.fillColor.gradient.stops[0].color.components[0];
+          generateGrid(seed);
         }
       }
     }
   }
 
-  generateGrid(toggle);
+  generateGrid(seed);
 
 
 
