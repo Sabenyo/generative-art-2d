@@ -40,6 +40,7 @@ window.onload = function() {
     xRight.push(xLast);
     yTop.push(yFirst);
     yBottom.push(yLast)
+
     // Iterate division size based on ratio value
     for (let i = 1; i <= nDivisions; i++) {
       let prevXLeft = xLeft[i - 1];
@@ -55,6 +56,7 @@ window.onload = function() {
       let nextYBottom = prevYBottom - ratio * (prevYBottom - yCenter);
       yBottom.push(nextYBottom);
     }
+
     // Combine left and right to horizontal, top and bottom to vertical
     xRight.reverse();
     xHorizontal.push(...xLeft);
@@ -67,23 +69,42 @@ window.onload = function() {
   function renderScene() {
     // Clear view
     project.activeLayer.clear();
+
     // Create background
     let background = new Path.Rectangle([0,0], view.size);
     background.fillColor = 'black';
+
     // Create rectangle for each x,y coordinate
     for (let i = 0; i < xHorizontal.length - 1; i++) {
       for (let j = 0; j < yVertical.length - 1; j++) {
         let from = new Point(xHorizontal[i], yVertical[j]);
         let to = new Point(xHorizontal[i + 1], yVertical[j + 1]);
         let rectangle = new Path.Rectangle(from, to);
-        // Modulate color based on odd/even position
-        if ((i + j) % 2 == 0) {
-          rectangle.fillColor = 'red';
+
+        // Modulate color gradient based on odd/even position
+        if ((i + j) % 2 === 0) {
+          let leftSide = rectangle.bounds.leftCenter;
+          let rightSide = rectangle.bounds.rightCenter;
+          rectangle.fillColor = {
+            gradient: {
+              stops: ['blue', 'green', 'blue']
+            },
+            origin: leftSide,
+            destination: rightSide
+          }
         }
         else {
-          rectangle.fillColor = 'blue';
+          let topSide = rectangle.bounds.topCenter;
+          let bottomSide = rectangle.bounds.bottomCenter;
+          rectangle.fillColor = {
+            gradient: {
+              stops: ['indigo','red', 'indigo']
+            },
+            origin: topSide,
+            destination: bottomSide
+          }
         }
-        rectangle.strokeColor = 'green';
+        rectangle.strokeColor = 'black';
       }
     }
   }
@@ -93,14 +114,9 @@ window.onload = function() {
   view.onMouseMove = function(event) {
     xCenter = event.point.x;
     yCenter = event.point.y;
-    console.log(xCenter, " - ", yCenter);
     generateDivisions();
     renderScene();
   }
 
-
-
-
-
-
+  
 }
