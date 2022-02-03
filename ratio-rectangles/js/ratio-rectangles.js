@@ -104,7 +104,7 @@ window.onload = function() {
             destination: bottomSide
           }
         }
-        rectangle.strokeColor = 'black';
+        rectangle.strokeColor = 'grey';
       }
     }
   }
@@ -118,5 +118,8 @@ window.onload = function() {
     renderScene();
   }
 
-  
+
+
+
+
 }
